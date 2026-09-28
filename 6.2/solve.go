@@ -61,54 +61,23 @@ func main() {
 	lastRange.End = maxLen
 	columnRanges = append(columnRanges, lastRange)
 
-	var groups [][]string
-	for _, r := range columnRanges {
-		var cGroup []string
-		for _, line := range expandedLines {
-			group := line[r.Start:r.End]
-			cGroup = append(cGroup, group)
-		}
-		groups = append(groups, cGroup)
-	}
-	// Main calculation
+	numberRows := expandedLines[:len(expandedLines)-1]
+	operatorRow := expandedLines[len(expandedLines)-1]
 	result := 0
-	for _, g := range groups {
-		operator := strings.TrimSpace(string(g[len(g)-1]))
-		var ogMat [][]string
-		for i := 0; i < len(g)-1; i++ { // only rows with numbers
-			var mRow []string
-			for _, n := range g[i] {
-				mRow = append(mRow, string(n))
-			}
-			ogMat = append(ogMat, mRow)
-		}
-		tMat := transpose(ogMat)
+
+	for _, r := range columnRanges {
+		operator := strings.TrimSpace(operatorRow[r.Start:r.End])
 		var collection []string
-		for r := range tMat {
-			number := strings.TrimSpace(strings.Join(tMat[r], ""))
-			collection = append(collection, number)
+		for c := r.Start; c < r.End; c++ {
+			sb := strings.Builder{}
+			for _, row := range numberRows {
+				sb.WriteByte(row[c])
+			}
+			collection = append(collection, strings.TrimSpace(sb.String()))
 		}
-		cResult := calcCollection(operator, collection)
-		result += cResult
+		result += calcCollection(operator, collection)
 	}
 	fmt.Println(result)
-}
-
-func transpose(grid [][]string) [][]string {
-	nRows := len(grid)
-	nCols := len(grid[0])
-
-	result := make([][]string, nCols)
-	for c := range result {
-		result[c] = make([]string, nRows)
-	}
-
-	for r := range nRows {
-		for c := range nCols {
-			result[c][r] = grid[r][c]
-		}
-	}
-	return result
 }
 
 func calcCollection(operator string, collection []string) int {
