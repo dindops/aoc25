@@ -78,7 +78,7 @@ func isWithinBoundaries(p Pair, c []Coordinates) bool {
 	// y1 < ey < y2 && x2 > ex1 && x1 < ex2 - horizontal check
 	for i := range c {
 		ea := c[i]
-		eb := c[(i+1)%len(c)]
+		eb := c[(i+1)%len(c)]  // wrap around the boundary (back to the beginning)
 		ex1, ex2 := min(ea.x, eb.x), max(ea.x, eb.x)
 		ey1, ey2 := min(ea.y, eb.y), max(ea.y, eb.y)
 		if ey1 == ey2 { //horizontal edge
